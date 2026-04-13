@@ -1,3 +1,12 @@
 node_modules
 build
 .env
+.git
+.gitignore
+README.md
+npm-debug.log
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
