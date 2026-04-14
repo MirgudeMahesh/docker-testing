@@ -1,6 +1,6 @@
 # JWT Stunt - Complete Project Guide
 
-## 🎯 Project Overview
+## 🎯 Project Overview's
 
 A complete JWT authentication system with:
 - **Frontend**: Modern React app with login/signup pages
