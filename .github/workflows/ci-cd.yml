@@ -1,0 +1,25 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+
+      - name: Build Images
+        run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/backend:latest ./backend
+          docker build --build-arg REACT_APP_API_URL=/api/auth -t ${{ secrets.DOCKER_USER }}/frontend-react:latest ./frontend-react
+
+      - name: Push Images
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/backend:latest
+          docker push ${{ secrets.DOCKER_USER }}/frontend-react:latest

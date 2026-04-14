@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT-STUNT Production Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .diagram-wrapper {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .info-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+        }
+        
+        .info-section h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .info-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .info-section li {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .info-section li:last-child {
+            border-bottom: none;
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ JWT-STUNT Production Architecture</h1>
+        <p class="description">How Frontend, Nginx, Backend, and Database interact in production</p>
+        
+        <div class="diagram-wrapper">
+            <div class="mermaid">
+                graph TD
+                    A["🌐 Client Browser"] -->|HTTP Requests| B["🐳 Docker Container - Nginx<br/>Port 80"]
+                    B -->|Serves Static React Files| C["⚛️ Frontend React App<br/>Built & Optimized<br/>Port 80 in container"]
+                    B -->|Proxy /api/ requests| D["🐳 Docker Container - Backend<br/>Port 8000"]
+                    D -->|Node.js Express Server| E["Backend API<br/>- Login/Register/Logout<br/>- JWT Token mgmt"]
+                    E -->|Query/Store Data| F["🐘 MySQL Database<br/>Users Table"]
+                    A -->|Auto-include Cookie| D
+                    
+                    style A fill:#FFD700
+                    style B fill:#FF6B6B
+                    style C fill:#4ECDC4
+                    style D fill:#45B7D1
+                    style E fill:#96CEB4
+                    style F fill:#FFEAA7
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h2>📦 Component Overview</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #FFD700;"></div>
+                    <span>Client Browser - User's device</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #FF6B6B;"></div>
+                    <span>Nginx Container - Reverse proxy</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #4ECDC4;"></div>
+                    <span>React Frontend - Static files</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #45B7D1;"></div>
+                    <span>Backend Container - API server</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #96CEB4;"></div>
+                    <span>Express API - Business logic</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #FFEAA7;"></div>
+                    <span>MySQL Database - Data storage</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h2>🔑 Key Features</h2>
+            <ul>
+                <li><strong>Nginx Reverse Proxy:</strong> Routes static files and proxies API requests to backend</li>
+                <li><strong>React Multi-stage Build:</strong> Optimized production build served as static files</li>
+                <li><strong>Express API:</strong> Handles authentication (login/register/logout) and JWT tokens</li>
+                <li><strong>HTTP-Only Cookies:</strong> Secure token storage, prevents XSS attacks</li>
+                <li><strong>CORS Protection:</strong> Restricted origins, credentials validation</li>
+                <li><strong>MySQL Connection Pool:</strong> Efficient database connections</li>
+                <li><strong>Docker Compose:</strong> Single command deployment of all services</li>
+            </ul>
+        </div>
+        
+        <div class="info-section">
+            <h2>🚀 Authentication Flow</h2>
+            <ul>
+                <li><strong>Login:</strong> User credentials → Backend validates → JWT token created → Stored in HTTP-only cookie</li>
+                <li><strong>Protected Requests:</strong> Browser auto-includes cookie → Backend validates token → Access granted</li>
+                <li><strong>Logout:</strong> Cookie cleared → User session terminated → Redirected to login</li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p>JWT-STUNT | Production Architecture Diagram | Generated April 2026</p>
+        </footer>
+    </div>
+</body>
+</html>
